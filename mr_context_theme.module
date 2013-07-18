@@ -1,0 +1,61 @@
+<?php
+/**
+ * @file
+ * Adds a custom context condition based on the theme of the currently displayed page.
+ */
+
+/**
+ * Implements hook_context_plugins().
+ */
+function mr_context_theme_context_plugins() {
+  $plugins = array();
+  $plugins['mr_context_themekey'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'mr_context_theme'),
+      'file' => 'mr_context_theme_condition.inc',
+      'class' => 'mr_context_themekey',
+      'parent' => 'context_condition',
+    ),
+  );
+  $plugins['mr_context_admintheme'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'mr_context_theme'),
+      'file' => 'mr_context_admin_condition.inc',
+      'class' => 'mr_context_admintheme',
+      'parent' => 'context_condition',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implements hook_context_registry().
+ */
+function mr_context_theme_context_registry() {
+  return array(
+    'conditions' => array(
+      'themekey' => array(
+        'title' => t('Default theme'),
+        'description' => t('This context will be triggered when viewing the site using the default theme.'),
+        'plugin' => 'mr_context_themekey',
+      ),
+      'admintheme' => array(
+        'title' => t('Admin theme'),
+        'description' => t('This context will be triggered when viewing the site using the admin theme.'),
+        'plugin' => 'mr_context_admintheme',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_context_page_condition().
+ */
+function mr_context_theme_context_page_condition() {
+  if ($plugin = context_get_plugin('condition', 'themekey')) {
+    $plugin->execute();
+  }
+  if ($plugin = context_get_plugin('condition', 'admintheme')) {
+    $plugin->execute();
+  }
+}

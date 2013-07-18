@@ -1,0 +1,5 @@
+name = "Context Condition: Default or Admin Theme"
+description = "Adds a condition filter for the Context module based on the Default or Admin theme."
+core = "7.x"
+package = "Context"
+dependencies[] = context
